@@ -1,0 +1,201 @@
+merchant_id,merchant_name,category,country,risk_category,created_at
+MER_00001,Vaidya-Dass,travel,IN,high,2026-03-01T08:57:46
+MER_00002,Nayar-Kannan,grocery,IN,low,2025-11-30T20:09:08
+MER_00003,"Iyengar, Balay and Kala",food,IN,low,2026-03-26T19:04:34
+MER_00004,Malhotra-Jaggi,food,IN,low,2026-06-02T03:26:26
+MER_00005,Dass Ltd,food,IN,medium,2025-02-16T01:37:16
+MER_00006,"Narain, Sekhon and Reddy",shopping,IN,high,2024-09-04T04:32:04
+MER_00007,Sarin PLC,grocery,IN,low,2024-06-03T14:07:13
+MER_00008,Padmanabhan-Bobal,education,IN,low,2024-02-14T00:01:00
+MER_00009,Natt LLC,grocery,IN,high,2025-05-22T14:43:46
+MER_00010,Guha Group,education,IN,low,2023-11-06T17:40:18
+MER_00011,"Agrawal, Kata and Sinha",utilities,IN,low,2024-03-07T06:32:33
+MER_00012,Sahni Inc,utilities,IN,low,2025-07-12T15:12:24
+MER_00013,"Mannan, Swamy and Anand",healthcare,IN,low,2025-01-09T19:43:21
+MER_00014,"Reddy, Bakshi and Shroff",grocery,IN,medium,2024-02-10T23:10:22
+MER_00015,"Bahri, Swaminathan and Bajaj",food,IN,low,2025-09-20T16:26:08
+MER_00016,Nagy and Sons,healthcare,IN,high,2024-10-09T15:14:28
+MER_00017,Jha and Sons,travel,IN,low,2023-09-08T20:18:13
+MER_00018,Puri-Agarwal,education,IN,low,2024-01-15T21:25:19
+MER_00019,"Datta, Sandhu and Kade",shopping,IN,medium,2024-05-04T04:01:53
+MER_00020,Pau Inc,utilities,IN,low,2024-12-18T18:12:41
+MER_00021,Lall PLC,entertainment,IN,low,2024-05-11T12:49:49
+MER_00022,"Bhatt, Kannan and Rai",healthcare,IN,medium,2025-10-23T01:02:01
+MER_00023,"Kala, Peri and Suri",education,IN,low,2024-06-06T10:33:46
+MER_00024,Zacharia PLC,grocery,IN,low,2026-07-15T19:09:52
+MER_00025,"Wagle, Ramanathan and Tara",healthcare,IN,low,2023-12-05T17:38:55
+MER_00026,Datta-Prakash,utilities,IN,low,2026-03-30T00:14:26
+MER_00027,Gaba-Johal,healthcare,IN,low,2026-07-21T02:09:29
+MER_00028,"Narayan, Pandit and Dewan",grocery,IN,medium,2025-06-12T16:18:18
+MER_00029,Agate-Chhabra,education,IN,medium,2024-02-06T21:34:28
+MER_00030,"Buch, Gour and Natarajan",grocery,IN,medium,2024-06-29T21:29:10
+MER_00031,"Konda, Narasimhan and Sengupta",healthcare,IN,low,2023-11-29T13:58:48
+MER_00032,Lad Inc,shopping,IN,medium,2026-07-09T03:32:52
+MER_00033,"Mitter, Ganguly and Prakash",healthcare,IN,low,2026-06-14T03:30:32
+MER_00034,Kumar LLC,education,IN,low,2024-06-22T04:16:00
+MER_00035,Parsa Ltd,healthcare,IN,low,2024-03-12T19:14:32
+MER_00036,"Baria, Johal and Devi",grocery,IN,medium,2024-09-03T19:02:40
+MER_00037,"Mitra, Bhargava and Dara",healthcare,IN,low,2023-12-25T00:58:12
+MER_00038,Bobal and Sons,utilities,IN,low,2025-01-14T21:47:54
+MER_00039,Luthra-Tata,food,IN,medium,2025-05-16T08:35:08
+MER_00040,Lanka-Apte,shopping,IN,medium,2024-10-02T23:54:58
+MER_00041,"Salvi, Sinha and Kota",healthcare,IN,low,2023-12-15T23:45:46
+MER_00042,Gara Ltd,healthcare,IN,low,2024-03-22T16:55:08
+MER_00043,Lall-Sabharwal,shopping,IN,low,2025-03-19T08:05:53
+MER_00044,Chanda-Merchant,travel,IN,medium,2024-10-09T04:38:54
+MER_00045,Raghavan-Prasad,entertainment,IN,medium,2026-08-19T21:17:23
+MER_00046,More-Gera,education,IN,low,2024-04-30T01:30:18
+MER_00047,Balasubramanian-Mannan,utilities,IN,low,2024-12-20T12:45:06
+MER_00048,Dave Ltd,grocery,IN,low,2024-08-20T19:55:17
+MER_00049,"Sarin, Gola and Sahota",grocery,IN,low,2026-07-16T10:09:58
+MER_00050,"Acharya, Barad and Chhabra",shopping,IN,low,2024-02-06T02:15:50
+MER_00051,"Dhaliwal, Gill and Sunder",healthcare,IN,medium,2026-04-27T05:42:39
+MER_00052,"Trivedi, Brahmbhatt and Sridhar",utilities,IN,medium,2026-05-31T07:31:04
+MER_00053,Kota Ltd,shopping,IN,low,2026-07-07T03:05:24
+MER_00054,Gola-Sem,shopping,IN,low,2025-08-01T14:41:58
+MER_00055,Modi-Deol,food,IN,low,2025-06-24T17:18:11
+MER_00056,"Tiwari, Garg and Nadig",utilities,IN,medium,2024-07-30T21:53:46
+MER_00057,Tandon Ltd,travel,IN,high,2024-11-22T04:06:57
+MER_00058,"Biswas, Chhabra and Chand",food,IN,high,2025-07-22T20:56:12
+MER_00059,Din Group,travel,IN,low,2023-12-22T07:45:05
+MER_00060,Khalsa Group,utilities,IN,low,2024-06-25T14:46:57
+MER_00061,Verma-Chatterjee,utilities,IN,medium,2024-09-06T03:54:54
+MER_00062,Minhas-Murthy,travel,IN,low,2025-08-01T03:52:45
+MER_00063,Sibal Group,healthcare,IN,low,2025-12-03T23:03:35
+MER_00064,Morar Inc,entertainment,IN,medium,2025-03-21T10:45:32
+MER_00065,Ramachandran PLC,food,IN,low,2024-12-23T21:19:57
+MER_00066,Pathak and Sons,grocery,IN,medium,2023-12-18T01:24:31
+MER_00067,Char-Shan,education,IN,low,2024-07-05T07:05:45
+MER_00068,Nadkarni and Sons,entertainment,IN,medium,2024-03-31T16:04:15
+MER_00069,Upadhyay LLC,entertainment,IN,high,2024-05-20T15:01:47
+MER_00070,Sarna and Sons,travel,IN,high,2023-11-06T02:12:02
+MER_00071,Narang Group,travel,IN,high,2024-02-09T04:05:42
+MER_00072,"Kari, Khare and Manne",food,IN,low,2024-03-31T23:45:08
+MER_00073,Seth Ltd,utilities,IN,medium,2025-09-17T21:01:44
+MER_00074,Sibal and Sons,utilities,IN,low,2025-09-16T02:51:02
+MER_00075,Bora-Kaul,entertainment,IN,low,2023-10-24T11:08:42
+MER_00076,Upadhyay Inc,food,IN,medium,2025-07-26T12:41:07
+MER_00077,Krishnan Ltd,travel,IN,medium,2026-02-04T23:33:25
+MER_00078,"Bawa, Yadav and Som",shopping,IN,low,2024-12-02T02:15:24
+MER_00079,Gour-Madan,utilities,IN,low,2024-07-25T09:29:32
+MER_00080,"Hari, Deo and Sharma",entertainment,IN,low,2024-10-17T04:39:48
+MER_00081,Ramachandran Inc,utilities,IN,low,2026-06-26T03:02:24
+MER_00082,Venkatesh-Sama,travel,IN,low,2025-09-18T15:05:55
+MER_00083,Ramesh-Aggarwal,education,IN,low,2025-02-02T21:24:00
+MER_00084,Madan Inc,travel,IN,medium,2025-08-28T11:22:37
+MER_00085,Tiwari Group,travel,IN,medium,2023-11-10T10:15:11
+MER_00086,"Narang, Babu and Devi",grocery,IN,low,2025-04-18T05:36:28
+MER_00087,"Subramaniam, Tata and Pau",grocery,IN,medium,2026-04-01T04:03:35
+MER_00088,Goda Ltd,education,IN,medium,2026-01-05T06:55:16
+MER_00089,Basu Group,food,IN,low,2024-12-30T02:32:08
+MER_00090,Sabharwal-Madan,food,IN,low,2023-08-30T17:45:39
+MER_00091,Suri Group,entertainment,IN,low,2024-04-28T17:12:19
+MER_00092,Vaidya-Toor,healthcare,IN,low,2023-11-27T13:49:48
+MER_00093,Bains-Khurana,healthcare,IN,low,2023-11-19T23:30:34
+MER_00094,Vig Ltd,healthcare,IN,low,2025-07-20T18:40:37
+MER_00095,"Khatri, Soni and Bandi",food,IN,medium,2026-05-31T18:46:20
+MER_00096,Arora Group,utilities,IN,high,2024-05-17T11:03:36
+MER_00097,Agate-Atwal,travel,IN,low,2025-05-30T15:23:51
+MER_00098,Mall Group,utilities,IN,low,2026-03-01T17:25:36
+MER_00099,"Sawhney, Arya and Gaba",entertainment,IN,low,2024-12-10T03:27:56
+MER_00100,Barad-Khurana,entertainment,IN,medium,2026-01-10T16:35:46
+MER_00101,Chaudhuri-Arora,entertainment,IN,medium,2024-11-06T05:18:22
+MER_00102,"Johal, Kade and Bhandari",healthcare,IN,low,2025-03-19T20:28:54
+MER_00103,Seshadri PLC,healthcare,IN,low,2024-06-28T23:04:40
+MER_00104,Bedi PLC,utilities,IN,low,2026-08-08T13:15:19
+MER_00105,"Natarajan, Kaur and Dayal",food,IN,low,2023-12-07T11:58:56
+MER_00106,Dhar Ltd,education,IN,low,2024-12-04T22:10:44
+MER_00107,Chaudhuri-Mittal,education,IN,low,2025-07-05T18:15:17
+MER_00108,Dhar Inc,utilities,IN,low,2024-11-13T05:49:29
+MER_00109,Wagle-Hans,utilities,IN,low,2024-01-28T07:31:08
+MER_00110,"Parmar, Pant and Yohannan",food,IN,low,2025-08-31T22:08:50
+MER_00111,"Bhattacharyya, Walia and Doshi",healthcare,IN,low,2025-01-08T19:15:08
+MER_00112,Mittal-Yohannan,food,IN,low,2024-11-12T10:11:33
+MER_00113,Dugal Group,entertainment,IN,low,2024-10-28T05:23:57
+MER_00114,"Merchant, Sarin and Krish",travel,IN,low,2023-09-17T23:24:01
+MER_00115,"Puri, Raman and Toor",healthcare,IN,low,2026-06-30T22:21:45
+MER_00116,"Dugal, Iyengar and Mistry",healthcare,IN,medium,2025-01-06T02:11:52
+MER_00117,"Pillay, Sarraf and Bumb",travel,IN,low,2025-09-22T20:50:12
+MER_00118,Merchant and Sons,utilities,IN,medium,2025-05-10T11:20:19
+MER_00119,Madan-Subramanian,utilities,IN,low,2026-02-12T15:52:19
+MER_00120,Prashad-Dhillon,education,IN,low,2023-12-30T13:30:54
+MER_00121,Ganesan Inc,entertainment,IN,medium,2025-04-28T19:25:15
+MER_00122,"Dutt, Saini and Varughese",shopping,IN,low,2023-11-09T21:13:51
+MER_00123,"Kala, Ramaswamy and Nath",healthcare,IN,low,2024-11-30T00:54:14
+MER_00124,"Chadha, Edwin and Radhakrishnan",shopping,IN,low,2026-07-20T03:29:30
+MER_00125,Manda-Narayanan,education,IN,low,2024-07-05T23:21:37
+MER_00126,Jha-Mishra,entertainment,IN,low,2024-10-03T00:34:19
+MER_00127,Choudhry-Dua,entertainment,IN,low,2024-12-12T11:39:36
+MER_00128,"Patla, Verma and Bahri",utilities,IN,low,2025-10-27T20:36:48
+MER_00129,Singhal Group,education,IN,low,2024-09-06T23:35:25
+MER_00130,"Shere, Deol and Jayaraman",education,IN,low,2024-11-16T04:25:40
+MER_00131,Grover-Rau,entertainment,IN,low,2025-09-05T21:38:36
+MER_00132,Ravi LLC,entertainment,IN,low,2026-05-30T06:39:38
+MER_00133,Soman-Nadig,education,IN,low,2026-07-18T11:16:32
+MER_00134,Hari-Rastogi,food,IN,low,2023-10-06T06:25:19
+MER_00135,Sarma-Virk,education,IN,low,2025-09-06T14:10:20
+MER_00136,Tara PLC,travel,IN,low,2024-02-28T09:02:58
+MER_00137,"Salvi, Goyal and Chacko",education,IN,low,2024-07-21T01:18:27
+MER_00138,Banerjee Ltd,entertainment,IN,low,2025-04-24T13:08:19
+MER_00139,Sundaram Ltd,healthcare,IN,medium,2024-09-18T18:06:50
+MER_00140,Thaker-Sunder,utilities,IN,low,2026-01-05T09:51:48
+MER_00141,Saini-Chadha,entertainment,IN,medium,2025-11-11T03:48:58
+MER_00142,Mangal-Mangat,healthcare,IN,low,2025-02-03T23:19:20
+MER_00143,Mannan-Banerjee,grocery,IN,low,2024-07-15T20:06:41
+MER_00144,Thakur and Sons,utilities,IN,low,2026-06-06T08:44:46
+MER_00145,Tiwari-Nadkarni,healthcare,IN,high,2026-06-01T13:10:21
+MER_00146,Bora-Bhatt,entertainment,IN,low,2024-11-19T00:57:33
+MER_00147,Bail Group,food,IN,low,2024-06-20T09:51:54
+MER_00148,Batra PLC,entertainment,IN,low,2024-02-27T11:22:48
+MER_00149,"Ghose, Buch and Garg",travel,IN,low,2025-11-01T02:11:50
+MER_00150,Dugal PLC,healthcare,IN,low,2025-01-09T16:29:09
+MER_00151,Bawa-Kohli,utilities,IN,medium,2024-04-05T07:39:58
+MER_00152,Pal Group,education,IN,low,2026-04-27T19:07:08
+MER_00153,"Guha, Gara and Apte",shopping,IN,medium,2025-05-22T17:33:41
+MER_00154,Naidu-Lad,food,IN,low,2025-10-22T21:19:15
+MER_00155,"Roy, Ratti and Acharya",grocery,IN,medium,2026-07-01T14:57:34
+MER_00156,"Varghese, Nanda and Gandhi",utilities,IN,low,2025-02-13T23:04:56
+MER_00157,"Choudhary, Narayan and Roy",travel,IN,low,2023-08-30T20:16:03
+MER_00158,Narula Inc,shopping,IN,low,2024-07-21T10:01:58
+MER_00159,Prasad-Dhillon,education,IN,low,2025-01-23T14:15:14
+MER_00160,Mohanty LLC,shopping,IN,low,2024-10-11T00:01:27
+MER_00161,Chawla-Bhardwaj,shopping,IN,low,2026-08-05T23:43:39
+MER_00162,Gade Inc,grocery,IN,medium,2025-08-18T12:52:43
+MER_00163,Murty-Sehgal,shopping,IN,low,2024-04-23T07:58:36
+MER_00164,Palan Inc,utilities,IN,low,2024-07-13T20:45:50
+MER_00165,Dyal-Anne,healthcare,IN,low,2026-02-25T18:07:44
+MER_00166,Bhasin-Shankar,education,IN,low,2025-05-16T02:15:47
+MER_00167,Dua Group,shopping,IN,low,2025-08-10T03:35:46
+MER_00168,Sangha and Sons,healthcare,IN,low,2023-10-20T10:02:41
+MER_00169,Chaudhuri LLC,shopping,IN,medium,2025-06-23T12:11:52
+MER_00170,Chopra-Mahajan,travel,IN,low,2026-06-26T00:15:03
+MER_00171,Sampath-Vaidya,education,IN,medium,2025-01-26T23:32:57
+MER_00172,"Thaker, Dass and Narain",travel,IN,medium,2023-12-30T00:45:09
+MER_00173,Rau-Bawa,healthcare,IN,medium,2026-01-18T06:28:48
+MER_00174,Balay and Sons,food,IN,low,2024-11-24T02:06:14
+MER_00175,"Chander, Sood and Bedi",shopping,IN,medium,2024-07-03T06:23:32
+MER_00176,Oza-Desai,grocery,IN,low,2024-09-19T12:20:59
+MER_00177,"Loke, Tandon and Varma",entertainment,IN,low,2024-11-24T22:43:45
+MER_00178,Deshmukh-Toor,education,IN,low,2024-08-12T11:27:39
+MER_00179,Patel-Goda,healthcare,IN,low,2026-04-06T11:49:39
+MER_00180,Deep LLC,education,IN,low,2024-04-18T17:01:52
+MER_00181,Salvi-Choudhary,shopping,IN,low,2024-09-04T01:55:19
+MER_00182,Mutti-Kaul,shopping,IN,low,2024-03-28T04:06:54
+MER_00183,Bali PLC,healthcare,IN,medium,2026-01-18T18:08:49
+MER_00184,Gara Group,education,IN,medium,2026-06-05T06:46:18
+MER_00185,"Issac, Manne and Kuruvilla",food,IN,low,2026-01-03T10:07:08
+MER_00186,Rau-Yohannan,healthcare,IN,low,2024-08-25T00:34:52
+MER_00187,Mitra-Banerjee,education,IN,low,2024-06-26T00:19:53
+MER_00188,Goel-Sarin,utilities,IN,low,2024-02-15T04:43:15
+MER_00189,Cheema LLC,food,IN,low,2024-02-07T10:50:28
+MER_00190,Mander LLC,shopping,IN,low,2025-10-05T00:48:57
+MER_00191,Virk Inc,travel,IN,low,2025-05-27T16:36:38
+MER_00192,"Comar, Ramesh and Dave",shopping,IN,low,2024-12-14T06:09:14
+MER_00193,"Chand, Bobal and Padmanabhan",entertainment,IN,medium,2025-12-14T21:57:47
+MER_00194,Maharaj-Seth,travel,IN,medium,2023-12-13T14:58:41
+MER_00195,Oza-Kakar,utilities,IN,medium,2025-10-05T11:03:58
+MER_00196,Mohanty-Master,utilities,IN,low,2024-01-10T02:33:58
+MER_00197,"Hans, Radhakrishnan and Nori",food,IN,medium,2025-01-02T05:08:26
+MER_00198,Vala-Barad,shopping,IN,medium,2025-05-15T01:54:25
+MER_00199,Khalsa PLC,travel,IN,low,2024-10-24T18:46:06
+MER_00200,"Misra, Sani and Brar",shopping,IN,low,2023-09-04T17:26:52

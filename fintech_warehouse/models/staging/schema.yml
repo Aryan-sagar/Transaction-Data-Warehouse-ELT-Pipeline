@@ -1,0 +1,68 @@
+version: 2
+
+models:
+
+  - name: stg_transactions
+
+    columns:
+
+      - name: transaction_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: account_id
+        data_tests:
+          - not_null
+
+      - name: merchant_id
+        data_tests:
+          - not_null
+
+      - name: amount
+        data_tests:
+          - not_null
+
+      - name: currency
+        data_tests:
+          - not_null
+
+      - name: transaction_timestamp
+        data_tests:
+          - not_null
+
+
+  - name: stg_accounts
+
+    columns:
+
+      - name: account_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: account_type
+        data_tests:
+          - not_null
+
+      - name: country
+        data_tests:
+          - not_null
+
+
+  - name: stg_merchants
+
+    columns:
+
+      - name: merchant_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: merchant_name
+        data_tests:
+          - not_null
+
+      - name: category
+        data_tests:
+          - not_null'

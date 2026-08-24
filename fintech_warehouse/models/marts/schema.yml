@@ -1,0 +1,284 @@
+version: 2
+
+models:
+  - name: fct_daily_transactions
+    description: "Daily transaction performance metrics."
+
+    columns:
+      - name: date_key
+        description: "Date represented by the daily aggregate."
+        tests:
+          - not_null
+          - unique
+
+      - name: total_transactions
+        description: "Total number of transactions."
+        tests:
+          - not_null
+
+      - name: successful_transactions
+        description: "Number of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_transactions
+        description: "Number of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_transactions
+        description: "Number of pending transactions."
+        tests:
+          - not_null
+
+      - name: total_amount
+        description: "Total transaction value."
+        tests:
+          - not_null
+
+      - name: successful_amount
+        description: "Total value of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_amount
+        description: "Total value of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_amount
+        description: "Total value of pending transactions."
+        tests:
+          - not_null
+
+      - name: success_rate
+        description: "Percentage of successful transactions."
+        tests:
+          - not_null
+
+  - name: fct_payment_method
+    description: "Transaction performance aggregated by payment method."
+
+    columns:
+      - name: payment_method
+        description: "Payment method used for the transaction."
+        tests:
+          - not_null
+          - unique
+
+      - name: total_transactions
+        description: "Total number of transactions."
+        tests:
+          - not_null
+
+      - name: successful_transactions
+        description: "Number of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_transactions
+        description: "Number of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_transactions
+        description: "Number of pending transactions."
+        tests:
+          - not_null
+
+      - name: total_amount
+        description: "Total transaction value."
+        tests:
+          - not_null
+
+      - name: successful_amount
+        description: "Total value of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_amount
+        description: "Total value of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_amount
+        description: "Total value of pending transactions."
+        tests:
+          - not_null
+
+      - name: success_rate
+        description: "Percentage of successful transactions."
+        tests:
+          - not_null
+
+
+  - name: fct_merchant_category
+    description: "Transaction performance aggregated by merchant category."
+
+    columns:
+      - name: category
+        description: "Merchant category."
+        tests:
+          - not_null
+          - unique
+
+      - name: total_transactions
+        description: "Total number of transactions."
+        tests:
+          - not_null
+
+      - name: successful_transactions
+        description: "Number of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_transactions
+        description: "Number of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_transactions
+        description: "Number of pending transactions."
+        tests:
+          - not_null
+
+      - name: total_amount
+        description: "Total transaction value."
+        tests:
+          - not_null
+
+      - name: successful_amount
+        description: "Total value of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_amount
+        description: "Total value of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_amount
+        description: "Total value of pending transactions."
+        tests:
+          - not_null
+
+      - name: success_rate
+        description: "Percentage of successful transactions."
+        tests:
+          - not_null
+
+  - name: fct_risk_category
+    description: "Transaction performance aggregated by merchant risk category."
+
+    columns:
+      - name: risk_category
+        description: "Risk category assigned to the merchant."
+        tests:
+          - not_null
+          - unique
+
+      - name: total_transactions
+        description: "Total number of transactions."
+        tests:
+          - not_null
+
+      - name: successful_transactions
+        description: "Number of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_transactions
+        description: "Number of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_transactions
+        description: "Number of pending transactions."
+        tests:
+          - not_null
+
+      - name: total_amount
+        description: "Total transaction value."
+        tests:
+          - not_null
+
+      - name: successful_amount
+        description: "Total value of successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_amount
+        description: "Total value of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_amount
+        description: "Total value of pending transactions."
+        tests:
+          - not_null
+
+      - name: success_rate
+        description: "Percentage of successful transactions."
+        tests:
+          - not_null
+
+  - name: fct_dashboard_summary
+    description: "Executive-level transaction KPIs."
+
+    columns:
+      - name: total_transactions
+        description: "Total number of transactions."
+        tests:
+          - not_null
+
+      - name: successful_transactions
+        description: "Total successful transactions."
+        tests:
+          - not_null
+
+      - name: failed_transactions
+        description: "Total failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_transactions
+        description: "Total pending transactions."
+        tests:
+          - not_null
+
+      - name: total_amount
+        description: "Total transaction value."
+        tests:
+          - not_null
+
+      - name: successful_amount
+        description: "Total successful transaction value."
+        tests:
+          - not_null
+
+      - name: failed_amount
+        description: "Total failed transaction value."
+        tests:
+          - not_null
+
+      - name: pending_amount
+        description: "Total pending transaction value."
+        tests:
+          - not_null
+
+      - name: success_rate
+        description: "Percentage of successful transactions."
+        tests:
+          - not_null
+
+      - name: failure_rate
+        description: "Percentage of failed transactions."
+        tests:
+          - not_null
+
+      - name: pending_rate
+        description: "Percentage of pending transactions."
+        tests:
+          - not_null
+   
+      

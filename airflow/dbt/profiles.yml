@@ -1,0 +1,13 @@
+fintech_warehouse:
+  target: dev
+
+  outputs:
+    dev:
+      type: postgres
+      host: postgres
+      port: 5432
+      user: fintech
+      password: fintech_dev_password
+      dbname: fintech
+      schema: staging
+      threads: 4
