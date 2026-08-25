@@ -1,4 +1,4 @@
-# Fintech Transaction Warehouse
+# Transaction Data Warehouse & ELT Pipeline
 
 An end-to-end fintech transaction data platform: ingestion, dimensional modeling, automated data-quality testing, and an interactive analytics dashboard.
 
