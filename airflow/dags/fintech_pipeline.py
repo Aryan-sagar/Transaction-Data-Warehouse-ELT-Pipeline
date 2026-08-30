@@ -46,14 +46,14 @@ with DAG(
         """,
     )
 
-    dbt_test = BashOperator(
-        task_id="dbt_test",
+    dbt_test_staging = BashOperator(
+        task_id="dbt_test_staging",
         bash_command="""
             cd /opt/airflow/project/fintech_warehouse
 
-            echo "=== DBT TESTS ==="
+            echo "=== DBT TESTS: STAGING ==="
 
-            dbt test
+            dbt test --select staging
         """,
     )
 
@@ -68,4 +68,18 @@ with DAG(
         """,
     )
 
-    ingest_raw >> dbt_staging >> dbt_test >> dbt_marts
+    dbt_test_marts = BashOperator(
+        task_id="dbt_test_marts",
+        bash_command="""
+            cd /opt/airflow/project/fintech_warehouse
+
+            echo "=== DBT TESTS: MARTS ==="
+
+            dbt test --select marts
+        """,
+    )
+
+    # Staging is tested before marts are built off it (fail fast on bad
+    # source data), and marts are tested only after they exist — testing
+    # them beforehand would just error on missing relations.
+    ingest_raw >> dbt_staging >> dbt_test_staging >> dbt_marts >> dbt_test_marts

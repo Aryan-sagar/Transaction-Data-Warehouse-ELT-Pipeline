@@ -1,0 +1,679 @@
+diff --git a/.env.example b/.env.example
+index e69de29..952b8b4 100644
+--- a/.env.example
++++ b/.env.example
+@@ -0,0 +1,8 @@
++# Copy this file to .env and fill in real values for local/dev use.
++# Never commit a real .env file.
++
++DB_HOST=localhost
++DB_PORT=5432
++DB_NAME=fintech
++DB_USER=fintech
++DB_PASSWORD=change_me
+diff --git a/airflow/dags/fintech_pipeline.py b/airflow/dags/fintech_pipeline.py
+index faf3d76..b85dd2e 100644
+--- a/airflow/dags/fintech_pipeline.py
++++ b/airflow/dags/fintech_pipeline.py
+@@ -46,14 +46,14 @@ with DAG(
+         """,
+     )
+ 
+-    dbt_test = BashOperator(
+-        task_id="dbt_test",
++    dbt_test_staging = BashOperator(
++        task_id="dbt_test_staging",
+         bash_command="""
+             cd /opt/airflow/project/fintech_warehouse
+ 
+-            echo "=== DBT TESTS ==="
++            echo "=== DBT TESTS: STAGING ==="
+ 
+-            dbt test
++            dbt test --select staging
+         """,
+     )
+ 
+@@ -68,4 +68,18 @@ with DAG(
+         """,
+     )
+ 
+-    ingest_raw >> dbt_staging >> dbt_test >> dbt_marts
+\ No newline at end of file
++    dbt_test_marts = BashOperator(
++        task_id="dbt_test_marts",
++        bash_command="""
++            cd /opt/airflow/project/fintech_warehouse
++
++            echo "=== DBT TESTS: MARTS ==="
++
++            dbt test --select marts
++        """,
++    )
++
++    # Staging is tested before marts are built off it (fail fast on bad
++    # source data), and marts are tested only after they exist — testing
++    # them beforehand would just error on missing relations.
++    ingest_raw >> dbt_staging >> dbt_test_staging >> dbt_marts >> dbt_test_marts
+\ No newline at end of file
+diff --git a/dashboard/app.py b/dashboard/app.py
+index 45bcadb..463c4b7 100644
+--- a/dashboard/app.py
++++ b/dashboard/app.py
+@@ -10,17 +10,15 @@ DB_CONFIG = {
+     "user": os.getenv("DB_USER", "fintech"),
+     "password": os.getenv("DB_PASSWORD", "fintech_dev_password"),
+ }
++@st.cache_resource
+ def get_connection():
+     return psycopg2.connect(**DB_CONFIG)
+ 
+ 
+-def load_query(query):
++@st.cache_data(ttl=300)
++def load_query(query, params=None):
+     connection = get_connection()
+-
+-    try:
+-        return pd.read_sql_query(query, connection)
+-    finally:
+-        connection.close()
++    return pd.read_sql_query(query, connection, params=params)
+ 
+ 
+ # -------------------------
+@@ -77,26 +75,19 @@ with st.sidebar:
+ # Header
+ # -------------------------
+ 
+-st.title("Fintech Transaction Intelligence")
++st.title("💳 Fintech Transaction Dashboard")
+ st.caption(
+     "Executive overview of transaction performance, "
+     "payment methods, merchant categories, and risk."
+ )
+ 
+-# -------------------------
+-# Title
+-# -------------------------
+-
+-st.title("💳 Fintech Transaction Dashboard")
+-st.caption("Transaction warehouse analytics")
+-
+ 
+ # -------------------------
+ # Load executive KPIs
+ # -------------------------
+ 
+ summary = load_query(
+-    f"""
++    """
+     SELECT
+         COUNT(*) AS total_transactions,
+ 
+@@ -136,8 +127,9 @@ summary = load_query(
+ 
+     FROM mart.fact_transactions
+     WHERE transaction_timestamp::date
+-          BETWEEN '{start_date}' AND '{end_date}'
+-    """
++          BETWEEN %(start_date)s AND %(end_date)s
++    """,
++    params={"start_date": start_date, "end_date": end_date},
+ )
+ 
+ kpi = summary.iloc[0]
+@@ -177,16 +169,17 @@ st.markdown("---")
+ st.subheader("Daily Transaction Trends")
+ 
+ daily = load_query(
+-    f"""
++    """
+     SELECT
+         date_key,
+         total_transactions,
+         total_amount
+     FROM mart.fct_daily_transactions
+     WHERE TO_DATE(date_key::text, 'YYYYMMDD')
+-          BETWEEN '{start_date}' AND '{end_date}'
++          BETWEEN %(start_date)s AND %(end_date)s
+     ORDER BY date_key
+-    """
++    """,
++    params={"start_date": start_date, "end_date": end_date},
+ )
+ daily["date"] = pd.to_datetime(
+     daily["date_key"].astype(str),
+@@ -215,7 +208,7 @@ st.markdown("---")
+ st.subheader("Payment Method Performance")
+ 
+ payment_methods = load_query(
+-    f"""
++    """
+     SELECT
+         payment_method,
+         COUNT(*) AS total_transactions,
+@@ -227,10 +220,11 @@ payment_methods = load_query(
+         ) AS success_rate
+     FROM mart.fact_transactions
+     WHERE transaction_timestamp::date
+-          BETWEEN '{start_date}' AND '{end_date}'
++          BETWEEN %(start_date)s AND %(end_date)s
+     GROUP BY payment_method
+     ORDER BY total_transactions DESC
+-    """
++    """,
++    params={"start_date": start_date, "end_date": end_date},
+ )
+ 
+ col1, col2 = st.columns(2)
+@@ -258,7 +252,7 @@ with col2:
+ # -------------------------
+ 
+ categories = load_query(
+-    f"""
++    """
+     SELECT
+         dm.category,
+         COUNT(*) AS total_transactions,
+@@ -273,10 +267,11 @@ categories = load_query(
+     INNER JOIN mart.dim_merchants dm
+         ON ft.merchant_key = dm.merchant_key
+     WHERE ft.transaction_timestamp::date
+-          BETWEEN '{start_date}' AND '{end_date}'
++          BETWEEN %(start_date)s AND %(end_date)s
+     GROUP BY dm.category
+     ORDER BY total_transactions DESC
+-    """
++    """,
++    params={"start_date": start_date, "end_date": end_date},
+ )
+ col1, col2 = st.columns(2)
+ 
+@@ -313,7 +308,7 @@ st.bar_chart(
+ st.markdown("---")
+ st.subheader("Merchant Risk Analysis")
+ risk = load_query(
+-    f"""
++    """
+     SELECT
+         dm.risk_category,
+         COUNT(*) AS total_transactions,
+@@ -336,10 +331,11 @@ risk = load_query(
+     INNER JOIN mart.dim_merchants dm
+         ON ft.merchant_key = dm.merchant_key
+     WHERE ft.transaction_timestamp::date
+-          BETWEEN '{start_date}' AND '{end_date}'
++          BETWEEN %(start_date)s AND %(end_date)s
+     GROUP BY dm.risk_category
+     ORDER BY total_transactions DESC
+-    """
++    """,
++    params={"start_date": start_date, "end_date": end_date},
+ )
+ 
+ col1, col2 = st.columns(2)
+diff --git a/db/init/001_create_raw_schema.sql b/db/init/001_create_raw_schema.sql
+new file mode 100644
+index 0000000..7ffd9bd
+--- /dev/null
++++ b/db/init/001_create_raw_schema.sql
+@@ -0,0 +1,43 @@
++-- Creates the schemas and raw tables that ingestion.py and the dbt
++-- sources (models/staging/sources.yml) assume already exist.
++--
++-- Raw columns are kept as TEXT/loose types on purpose: the raw layer
++-- holds whatever ingestion.py inserts verbatim (including the messy
++-- values inject_anomalies.py deliberately produces), and stg_*.sql
++-- models do the TRIM/UPPER/LOWER/CAST cleanup. Casting too early here
++-- would defeat the point of testing that cleanup layer.
++
++CREATE SCHEMA IF NOT EXISTS raw;
++CREATE SCHEMA IF NOT EXISTS staging;
++CREATE SCHEMA IF NOT EXISTS mart;
++
++CREATE TABLE IF NOT EXISTS raw.accounts (
++    account_id      TEXT PRIMARY KEY,
++    account_type    TEXT,
++    country         TEXT,
++    created_at      TEXT,
++    status          TEXT,
++    ingested_at     TIMESTAMP NOT NULL DEFAULT now()
++);
++
++CREATE TABLE IF NOT EXISTS raw.merchants (
++    merchant_id     TEXT PRIMARY KEY,
++    merchant_name   TEXT,
++    category        TEXT,
++    country         TEXT,
++    risk_category   TEXT,
++    created_at      TEXT,
++    ingested_at     TIMESTAMP NOT NULL DEFAULT now()
++);
++
++CREATE TABLE IF NOT EXISTS raw.transactions (
++    transaction_id          TEXT PRIMARY KEY,
++    account_id              TEXT,
++    merchant_id             TEXT,
++    amount                  TEXT,
++    currency                TEXT,
++    status                  TEXT,
++    payment_method          TEXT,
++    transaction_timestamp   TEXT,
++    ingested_at             TIMESTAMP NOT NULL DEFAULT now()
++);
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 850b207..253d47a 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -18,6 +18,7 @@ services:
+ 
+     volumes:
+       - postgres_data:/var/lib/postgresql/data
++      - ./db/init:/docker-entrypoint-initdb.d
+ 
+     healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U fintech -d fintech"]
+diff --git a/fintech_warehouse/tests/assert_daily_status_counts_reconcile.sql b/fintech_warehouse/tests/assert_daily_status_counts_reconcile.sql
+new file mode 100644
+index 0000000..1aeb568
+--- /dev/null
++++ b/fintech_warehouse/tests/assert_daily_status_counts_reconcile.sql
+@@ -0,0 +1,15 @@
++-- Fails if any row where successful + failed + pending != total.
++-- Generic not_null/unique tests can't catch this kind of cross-column
++-- consistency bug (e.g. a status falling through every FILTER clause
++-- if new status values are ever introduced upstream).
++
++SELECT
++    date_key,
++    total_transactions,
++    successful_transactions + failed_transactions + pending_transactions
++        AS summed_transactions
++
++FROM {{ ref('fct_daily_transactions') }}
++
++WHERE total_transactions
++    != successful_transactions + failed_transactions + pending_transactions
+diff --git a/src/pipeline/generate_incremental_batch.py b/src/pipeline/generate_incremental_batch.py
+deleted file mode 100644
+index 51f688e..0000000
+--- a/src/pipeline/generate_incremental_batch.py
++++ /dev/null
+@@ -1,91 +0,0 @@
+-import csv
+-import random
+-from datetime import datetime
+-from pathlib import Path
+-
+-
+-OUTPUT = Path("data/raw/incremental_transactions.csv")
+-
+-ACCOUNT_IDS = [
+-    f"ACC_{i:06d}"
+-    for i in range(1, 1001)
+-]
+-
+-MERCHANT_IDS = [
+-    f"MER_{i:05d}"
+-    for i in range(1, 201)
+-]
+-
+-PAYMENT_METHODS = [
+-    "upi",
+-    "card",
+-    "net_banking",
+-    "wallet",
+-]
+-
+-STATUSES = [
+-    "success",
+-    "failed",
+-    "pending",
+-]
+-
+-
+-def generate_batch(count=100):
+-
+-    records = []
+-
+-    for i in range(count):
+-
+-        transaction_number = 10_000 + i + 1
+-
+-        records.append({
+-            "transaction_id": f"TXN_{transaction_number:09d}",
+-            "account_id": random.choice(ACCOUNT_IDS),
+-            "merchant_id": random.choice(MERCHANT_IDS),
+-            "amount": round(random.uniform(50, 5000), 2),
+-            "currency": "INR",
+-            "status": random.choices(
+-                STATUSES,
+-                weights=[94, 4, 2],
+-            )[0],
+-            "payment_method": random.choice(
+-                PAYMENT_METHODS
+-            ),
+-            "transaction_timestamp": datetime.now().isoformat(),
+-        })
+-
+-    return records
+-
+-
+-def main():
+-
+-    records = generate_batch(100)
+-
+-    OUTPUT.parent.mkdir(
+-        parents=True,
+-        exist_ok=True,
+-    )
+-
+-    with open(
+-        OUTPUT,
+-        "w",
+-        newline="",
+-        encoding="utf-8",
+-    ) as file:
+-
+-        writer = csv.DictWriter(
+-            file,
+-            fieldnames=records[0].keys(),
+-        )
+-
+-        writer.writeheader()
+-        writer.writerows(records)
+-
+-    print(
+-        f"Generated {len(records)} new transactions "
+-        f"→ {OUTPUT}"
+-    )
+-
+-
+-if __name__ == "__main__":
+-    main()
+diff --git a/src/pipeline/transform.py b/src/pipeline/transform.py
+deleted file mode 100644
+index 7518c05..0000000
+--- a/src/pipeline/transform.py
++++ /dev/null
+@@ -1,106 +0,0 @@
+-import psycopg2
+-
+-
+-DATABASE_CONFIG = {
+-    "host": "localhost",
+-    "port": "5432",
+-    "database": "fintech",
+-    "user": "fintech",
+-    "password": "fintech_dev_password",
+-}
+-
+-
+-def get_connection():
+-    return psycopg2.connect(**DATABASE_CONFIG)
+-
+-
+-def transform_transactions():
+-    connection = get_connection()
+-
+-    try:
+-        with connection:
+-            with connection.cursor() as cursor:
+-
+-                # Clear the previous staging run.
+-                cursor.execute(
+-                    "TRUNCATE TABLE staging.transactions;"
+-                )
+-
+-                cursor.execute(
+-                    """
+-                    INSERT INTO staging.transactions (
+-                        transaction_id,
+-                        account_id,
+-                        merchant_id,
+-                        amount,
+-                        currency,
+-                        status,
+-                        payment_method,
+-                        transaction_timestamp,
+-                        ingested_at
+-                    )
+-
+-                    SELECT DISTINCT ON (transaction_id)
+-                        transaction_id,
+-                        TRIM(account_id),
+-                        TRIM(merchant_id),
+-                        CAST(amount AS NUMERIC(18,2)),
+-                        UPPER(TRIM(currency)),
+-                        LOWER(TRIM(status)),
+-                        LOWER(TRIM(payment_method)),
+-                        CAST(transaction_timestamp AS TIMESTAMP),
+-                        ingested_at
+-
+-                    FROM raw.transactions
+-
+-                    WHERE NULLIF(TRIM(account_id), '') IS NOT NULL
+-                      AND NULLIF(TRIM(merchant_id), '') IS NOT NULL
+-                      AND amount::NUMERIC > 0
+-                      AND currency IS NOT NULL
+-                      AND transaction_timestamp IS NOT NULL
+-
+-                    ORDER BY
+-                        transaction_id,
+-                        ingested_at DESC;
+-                    """
+-                )
+-
+-                cursor.execute(
+-                    """
+-                    DELETE FROM staging.transactions s
+-                    WHERE NOT EXISTS (
+-                        SELECT 1
+-                        FROM raw.accounts a
+-                        WHERE a.account_id = s.account_id
+-                    );
+-                    """
+-                )
+-
+-                cursor.execute(
+-                    """
+-                    DELETE FROM staging.transactions s
+-                    WHERE NOT EXISTS (
+-                        SELECT 1
+-                        FROM raw.merchants m
+-                        WHERE m.merchant_id = s.merchant_id
+-                    );
+-                    """
+-                )
+-
+-                cursor.execute(
+-                    "SELECT COUNT(*) FROM staging.transactions;"
+-                )
+-
+-                count = cursor.fetchone()[0]
+-
+-                print(
+-                    f"Staging transformation completed: "
+-                    f"{count:,} clean transactions"
+-                )
+-
+-    finally:
+-        connection.close()
+-
+-
+-if __name__ == "__main__":
+-    transform_transactions()
+\ No newline at end of file
+diff --git a/src/pipeline/validation.py b/src/pipeline/validation.py
+deleted file mode 100644
+index 8b01688..0000000
+--- a/src/pipeline/validation.py
++++ /dev/null
+@@ -1,165 +0,0 @@
+-import psycopg2
+-from dataclasses import dataclass
+-
+-
+-DATABASE_CONFIG = {
+-    "host": "localhost",
+-    "port": "5432",
+-    "database": "fintech",
+-    "user": "fintech",
+-    "password": "fintech_dev_password",
+-}
+-
+-
+-@dataclass
+-class ValidationResult:
+-    name: str
+-    passed: bool
+-    details: str
+-
+-
+-def get_connection():
+-    return psycopg2.connect(**DATABASE_CONFIG)
+-
+-
+-def check_transaction_duplicates(cursor):
+-    cursor.execute("""
+-        SELECT COUNT(*)
+-        FROM (
+-            SELECT transaction_id
+-            FROM raw.transactions
+-            GROUP BY transaction_id
+-            HAVING COUNT(*) > 1
+-        ) duplicates;
+-    """)
+-
+-    count = cursor.fetchone()[0]
+-
+-    return ValidationResult(
+-        name="transaction_uniqueness",
+-        passed=count == 0,
+-        details=f"{count} duplicate transaction IDs found",
+-    )
+-
+-
+-def check_missing_accounts(cursor):
+-    cursor.execute("""
+-        SELECT COUNT(*)
+-        FROM raw.transactions
+-        WHERE account_id IS NULL
+-           OR TRIM(account_id) = '';
+-    """)
+-
+-    count = cursor.fetchone()[0]
+-
+-    return ValidationResult(
+-        name="account_id_not_null",
+-        passed=count == 0,
+-        details=f"{count} transactions have missing account IDs",
+-    )
+-
+-
+-def check_missing_merchants(cursor):
+-    cursor.execute("""
+-        SELECT COUNT(*)
+-        FROM raw.transactions
+-        WHERE merchant_id IS NULL
+-           OR TRIM(merchant_id) = '';
+-    """)
+-
+-    count = cursor.fetchone()[0]
+-
+-    return ValidationResult(
+-        name="merchant_id_not_null",
+-        passed=count == 0,
+-        details=f"{count} transactions have missing merchant IDs",
+-    )
+-
+-
+-def check_invalid_accounts(cursor):
+-    cursor.execute("""
+-        SELECT COUNT(*)
+-        FROM raw.transactions t
+-        LEFT JOIN raw.accounts a
+-            ON t.account_id = a.account_id
+-        WHERE t.account_id IS NOT NULL
+-          AND TRIM(t.account_id) <> ''
+-          AND a.account_id IS NULL;
+-    """)
+-
+-    count = cursor.fetchone()[0]
+-
+-    return ValidationResult(
+-        name="account_referential_integrity",
+-        passed=count == 0,
+-        details=f"{count} transactions reference nonexistent accounts",
+-    )
+-
+-
+-def check_invalid_amounts(cursor):
+-    cursor.execute("""
+-        SELECT COUNT(*)
+-        FROM raw.transactions
+-        WHERE amount::NUMERIC <= 0;
+-    """)
+-
+-    count = cursor.fetchone()[0]
+-
+-    return ValidationResult(
+-        name="positive_transaction_amount",
+-        passed=count == 0,
+-        details=f"{count} transactions have invalid amounts",
+-    )
+-
+-
+-def run_quality_gate():
+-    connection = get_connection()
+-
+-    try:
+-        with connection:
+-            with connection.cursor() as cursor:
+-
+-                checks = [
+-                    check_transaction_duplicates(cursor),
+-                    check_missing_accounts(cursor),
+-                    check_missing_merchants(cursor),
+-                    check_invalid_accounts(cursor),
+-                    check_invalid_amounts(cursor),
+-                ]
+-
+-        print("\nDATA QUALITY REPORT")
+-        print("=" * 60)
+-
+-        all_passed = True
+-
+-        for result in checks:
+-
+-            status = "PASS" if result.passed else "FAIL"
+-
+-            print(
+-                f"[{status}] "
+-                f"{result.name}: "
+-                f"{result.details}"
+-            )
+-
+-            if not result.passed:
+-                all_passed = False
+-
+-        print("=" * 60)
+-
+-        if all_passed:
+-            print("QUALITY GATE PASSED")
+-            return True
+-
+-        print("QUALITY GATE FAILED")
+-        return False
+-
+-    finally:
+-        connection.close()
+-
+-
+-if __name__ == "__main__":
+-    passed = run_quality_gate()
+-
+-    if not passed:
+-        raise SystemExit(1)
+\ No newline at end of file

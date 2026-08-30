@@ -10,17 +10,15 @@ DB_CONFIG = {
     "user": os.getenv("DB_USER", "fintech"),
     "password": os.getenv("DB_PASSWORD", "fintech_dev_password"),
 }
+@st.cache_resource
 def get_connection():
     return psycopg2.connect(**DB_CONFIG)
 
 
-def load_query(query):
+@st.cache_data(ttl=300)
+def load_query(query, params=None):
     connection = get_connection()
-
-    try:
-        return pd.read_sql_query(query, connection)
-    finally:
-        connection.close()
+    return pd.read_sql_query(query, connection, params=params)
 
 
 # -------------------------
@@ -77,18 +75,11 @@ with st.sidebar:
 # Header
 # -------------------------
 
-st.title("Fintech Transaction Intelligence")
+st.title("💳 Fintech Transaction Dashboard")
 st.caption(
     "Executive overview of transaction performance, "
     "payment methods, merchant categories, and risk."
 )
-
-# -------------------------
-# Title
-# -------------------------
-
-st.title("💳 Fintech Transaction Dashboard")
-st.caption("Transaction warehouse analytics")
 
 
 # -------------------------
@@ -96,7 +87,7 @@ st.caption("Transaction warehouse analytics")
 # -------------------------
 
 summary = load_query(
-    f"""
+    """
     SELECT
         COUNT(*) AS total_transactions,
 
@@ -136,8 +127,9 @@ summary = load_query(
 
     FROM mart.fact_transactions
     WHERE transaction_timestamp::date
-          BETWEEN '{start_date}' AND '{end_date}'
-    """
+          BETWEEN %(start_date)s AND %(end_date)s
+    """,
+    params={"start_date": start_date, "end_date": end_date},
 )
 
 kpi = summary.iloc[0]
@@ -177,16 +169,17 @@ st.markdown("---")
 st.subheader("Daily Transaction Trends")
 
 daily = load_query(
-    f"""
+    """
     SELECT
         date_key,
         total_transactions,
         total_amount
     FROM mart.fct_daily_transactions
     WHERE TO_DATE(date_key::text, 'YYYYMMDD')
-          BETWEEN '{start_date}' AND '{end_date}'
+          BETWEEN %(start_date)s AND %(end_date)s
     ORDER BY date_key
-    """
+    """,
+    params={"start_date": start_date, "end_date": end_date},
 )
 daily["date"] = pd.to_datetime(
     daily["date_key"].astype(str),
@@ -215,7 +208,7 @@ st.markdown("---")
 st.subheader("Payment Method Performance")
 
 payment_methods = load_query(
-    f"""
+    """
     SELECT
         payment_method,
         COUNT(*) AS total_transactions,
@@ -227,10 +220,11 @@ payment_methods = load_query(
         ) AS success_rate
     FROM mart.fact_transactions
     WHERE transaction_timestamp::date
-          BETWEEN '{start_date}' AND '{end_date}'
+          BETWEEN %(start_date)s AND %(end_date)s
     GROUP BY payment_method
     ORDER BY total_transactions DESC
-    """
+    """,
+    params={"start_date": start_date, "end_date": end_date},
 )
 
 col1, col2 = st.columns(2)
@@ -258,7 +252,7 @@ with col2:
 # -------------------------
 
 categories = load_query(
-    f"""
+    """
     SELECT
         dm.category,
         COUNT(*) AS total_transactions,
@@ -273,10 +267,11 @@ categories = load_query(
     INNER JOIN mart.dim_merchants dm
         ON ft.merchant_key = dm.merchant_key
     WHERE ft.transaction_timestamp::date
-          BETWEEN '{start_date}' AND '{end_date}'
+          BETWEEN %(start_date)s AND %(end_date)s
     GROUP BY dm.category
     ORDER BY total_transactions DESC
-    """
+    """,
+    params={"start_date": start_date, "end_date": end_date},
 )
 col1, col2 = st.columns(2)
 
@@ -313,7 +308,7 @@ st.bar_chart(
 st.markdown("---")
 st.subheader("Merchant Risk Analysis")
 risk = load_query(
-    f"""
+    """
     SELECT
         dm.risk_category,
         COUNT(*) AS total_transactions,
@@ -336,10 +331,11 @@ risk = load_query(
     INNER JOIN mart.dim_merchants dm
         ON ft.merchant_key = dm.merchant_key
     WHERE ft.transaction_timestamp::date
-          BETWEEN '{start_date}' AND '{end_date}'
+          BETWEEN %(start_date)s AND %(end_date)s
     GROUP BY dm.risk_category
     ORDER BY total_transactions DESC
-    """
+    """,
+    params={"start_date": start_date, "end_date": end_date},
 )
 
 col1, col2 = st.columns(2)
