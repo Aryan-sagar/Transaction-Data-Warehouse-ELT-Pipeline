@@ -7,7 +7,7 @@ fintech_warehouse:
       host: postgres
       port: 5432
       user: fintech
-      password: fintech_dev_password
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
       dbname: fintech
       schema: staging
       threads: 4
