@@ -1,4 +1,5 @@
 from datetime import datetime ,timedelta
+import os
 
 from airflow.sdk import DAG
 from airflow.providers.standard.operators.bash import BashOperator
@@ -23,7 +24,7 @@ with DAG(
             "DB_PORT": "5432",
             "DB_NAME": "fintech",
             "DB_USER": "fintech",
-            "DB_PASSWORD": "fintech_dev_password",
+            "DB_PASSWORD": os.getenv("POSTGRES_PASSWORD"),
         },
         bash_command="""
             cd /opt/airflow/project
@@ -79,7 +80,15 @@ with DAG(
         """,
     )
 
-    # Staging is tested before marts are built off it (fail fast on bad
-    # source data), and marts are tested only after they exist — testing
-    # them beforehand would just error on missing relations.
-    ingest_raw >> dbt_staging >> dbt_test_staging >> dbt_marts >> dbt_test_marts
+    promote_marts = BashOperator(
+        task_id="promote_marts",
+        bash_command="""
+            cd /opt/airflow/project/fintech_warehouse
+
+            echo "=== PROMOTE MARTS: mart_next -> mart ==="
+
+            dbt run-operation swap_mart_schema
+        """,
+    )
+
+ 
