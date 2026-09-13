@@ -161,6 +161,27 @@ fintech-transaction-warehouse/
 - Interactive Streamlit dashboard with dynamic date filtering
 - Fully Dockerized dashboard-to-database connectivity
 
+## Failure Modes & Recovery
+
+[#failure-modes--recovery](#failure-modes--recovery)
+
+This is a single-node batch pipeline, not a distributed system — no
+multi-node consensus, no network partitions between independent
+stores. What follows are the concrete partial-failure and consistency
+modes that *do* apply to an orchestrated batch ELT pipeline like this
+one, what's been fixed, and what's still open.
+
+| # | Failure mode | Status | Fix |
+|---|---|---|---|
+| 1 | A failed/retried Airflow task re-runs ingestion, but re-inserting an existing `transaction_id` is a no-op — so a real status correction (`pending` → `success`) on an already-ingested row was silently dropped, both at the raw layer and downstream. | **Fixed** | `ingestion.py` now upserts (`ON CONFLICT ... DO UPDATE`) when `status` or `amount` actually changed, instead of `DO NOTHING`. |
+| 2 | `fact_transactions`'s incremental filter watermarked on `transaction_timestamp`, which never changes at the source — so even with raw fixed, a status correction on an old transaction would never re-cross the watermark and reach the fact table. | **Fixed** | Incremental filter now watermarks on `ingested_at` (which advances on every upsert), with `source_ingested_at` carried onto the fact table to compare against. |
+| 3 | `dbt run --select marts` builds table-by-table with no atomicity. If it fails partway (or `dbt test` fails after), the dashboard — which queries the same schema dbt just built into — can read a half-rebuilt or untested warehouse with no signal anything's wrong. | **Fixed** | Marts always build into a shadow schema, `mart_next` (`macros/generate_schema_name.sql`). A new `promote_marts` DAG task runs `swap_mart_schema()` (`macros/swap_mart_schema.sql`) only after `dbt_test_marts` passes, atomically renaming `mart_next` → `mart` in one transaction. A failed build or failed test leaves `mart` serving the last known-good state; the dashboard never sees an in-progress or failed run. |
+| 4 | Two DAG runs (e.g. a manual backfill and the hourly schedule) can overlap and write to the same tables concurrently — nothing currently prevents this. | Open | Add `max_active_runs=1` on the DAG, or an Airflow pool / Postgres advisory lock acquired in `ingest_raw`. |
+| 5 | `ingestion.py` reads each CSV fully into a Python list before `executemany` — fine at 10k rows, an OOM risk at real-world volume. | Open | Stream via `psycopg2.extras.copy_expert` (`COPY`) or chunked batches instead of one in-memory list. |
+| 6 | DB password is hardcoded in `docker-compose.yml` and in the DAG's task `env=` dict. | Open | Move to `.env` + `${POSTGRES_PASSWORD}` in compose, and an Airflow Connection (`PostgresHook`) instead of a literal dict in the DAG. |
+| 7 | `stg_transactions.sql` silently drops rows failing `amount > 0` / null checks — invalid data just disappears with no audit trail. | Open | Route failing rows to a `stg_transactions_quarantine` model instead of filtering them out. |
+| 8 | Postgres is a single instance serving both the write path (ingestion, dbt builds) and the read path (dashboard) — no replica, no failover. | Open | Add a read replica (or at least a separate pooled connection) for the dashboard so write load and read load don't contend, and the dashboard has somewhere to fail over to. |
+
 ## Future Improvements
 
 - Incremental dbt models
