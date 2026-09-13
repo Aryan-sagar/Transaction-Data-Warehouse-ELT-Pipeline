@@ -108,6 +108,7 @@ services:
 
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_CONN}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
@@ -148,6 +149,7 @@ services:
 
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_CONN}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
@@ -185,6 +187,7 @@ services:
 
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_CONN}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
@@ -224,8 +227,8 @@ services:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: ${POSTGRES_DB}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_USER: ${POSTGRES_READONLY_USER}
+      DB_PASSWORD: ${POSTGRES_READONLY_PASSWORD}
 
     ports:
       - "8501:8501"
