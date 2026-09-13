@@ -10,7 +10,7 @@ DATABASE_CONFIG = {
     "port": os.getenv("DB_PORT", "5432"),
     "database": os.getenv("DB_NAME", "fintech"),
     "user": os.getenv("DB_USER", "fintech"),
-    "password": os.getenv("DB_PASSWORD", "fintech_dev_password"),
+    "password": os.getenv("DB_PASSWORD"),
 }
 
 RAW_DIR = Path("data/raw")
@@ -135,17 +135,26 @@ def load_transactions(cursor):
             transaction_timestamp
         )
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (transaction_id) DO NOTHING
+        ON CONFLICT (transaction_id) DO UPDATE SET
+            amount = EXCLUDED.amount,
+            currency = EXCLUDED.currency,
+            status = EXCLUDED.status,
+            payment_method = EXCLUDED.payment_method,
+            transaction_timestamp = EXCLUDED.transaction_timestamp,
+            ingested_at = now()
+        WHERE
+            raw.transactions.status IS DISTINCT FROM EXCLUDED.status
+            OR raw.transactions.amount IS DISTINCT FROM EXCLUDED.amount
         """,
         rows,
     )
 
-    inserted = cursor.rowcount
-    skipped = len(rows) - inserted
+    touched = cursor.rowcount
+    unchanged = len(rows) - touched
 
-    print(f"Transactions read:     {len(rows):,}")
-    print(f"Transactions inserted: {inserted:,}")
-    print(f"Transactions skipped:  {skipped:,}")
+    print(f"Transactions read:               {len(rows):,}")
+    print(f"Transactions inserted/updated:    {touched:,}")
+    print(f"Transactions unchanged (skipped): {unchanged:,}")
 
 
 def main():
