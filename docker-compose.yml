@@ -9,9 +9,9 @@ services:
     container_name: fintech-postgres
 
     environment:
-      POSTGRES_DB: fintech
-      POSTGRES_USER: fintech
-      POSTGRES_PASSWORD: fintech_dev_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
     ports:
       - "5432:5432"
@@ -21,7 +21,7 @@ services:
       - ./db/init:/docker-entrypoint-initdb.d
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U fintech -d fintech"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -36,15 +36,15 @@ services:
     container_name: airflow-postgres
 
     environment:
-      POSTGRES_DB: airflow
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: ${AIRFLOW_DB}
+      POSTGRES_USER: ${AIRFLOW_USER}
+      POSTGRES_PASSWORD: ${AIRFLOW_PASSWORD}
 
     volumes:
       - airflow_postgres_data:/var/lib/postgresql/data
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U airflow -d airflow"]
+      test: ["CMD-SHELL", "pg_isready -U ${AIRFLOW_USER} -d ${AIRFLOW_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -64,8 +64,7 @@ services:
         condition: service_healthy
 
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: >-
-        postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_CONN}
 
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
@@ -77,7 +76,6 @@ services:
       - ./airflow/plugins:/opt/airflow/plugins
       - ./:/opt/airflow/project
       - ./airflow/dbt:/home/airflow/.dbt
-      
 
     command:
       - bash
@@ -101,6 +99,7 @@ services:
     build:
       context: .
       dockerfile: airflow/Dockerfile
+
     container_name: airflow-webserver
 
     depends_on:
@@ -108,16 +107,15 @@ services:
         condition: service_completed_successfully
 
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: >-
-        postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_CONN}
 
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-     
+
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-webserver:8080/execution/
-  
-      AIRFLOW__API_AUTH__JWT_SECRET: fintech-airflow-dev-secret
+
+      AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET}
 
     ports:
       - "8080:8080"
@@ -141,6 +139,7 @@ services:
     build:
       context: .
       dockerfile: airflow/Dockerfile
+
     container_name: airflow-scheduler
 
     depends_on:
@@ -148,16 +147,15 @@ services:
         condition: service_completed_successfully
 
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: >-
-        postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_CONN}
 
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
- 
+
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-webserver:8080/execution/
 
-      AIRFLOW__API_AUTH__JWT_SECRET: fintech-airflow-dev-secret
+      AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET}
 
     volumes:
       - ./airflow/dags:/opt/airflow/dags
@@ -169,6 +167,10 @@ services:
     command:
       - scheduler
 
+
+  # =========================================================
+  # AIRFLOW DAG PROCESSOR
+  # =========================================================
 
   airflow-dag-processor:
     build:
@@ -182,16 +184,15 @@ services:
         condition: service_completed_successfully
 
     environment:
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: >-
-        postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW_DB_CONN}
 
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-      
+
       AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-webserver:8080/execution/
 
-      AIRFLOW__API_AUTH__JWT_SECRET: fintech-airflow-dev-secret
+      AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET}
 
     volumes:
       - ./airflow/dags:/opt/airflow/dags
@@ -202,6 +203,7 @@ services:
 
     command:
       - dag-processor
+
 
   # =========================================================
   # STREAMLIT DASHBOARD
@@ -221,16 +223,14 @@ services:
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_NAME: fintech
-      DB_USER: fintech
-      DB_PASSWORD: fintech_dev_password
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
 
     ports:
       - "8501:8501"
 
 
-
 volumes:
   postgres_data:
   airflow_postgres_data:
-
