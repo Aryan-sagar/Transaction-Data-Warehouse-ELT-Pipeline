@@ -8,7 +8,7 @@ DB_CONFIG = {
     "port": os.getenv("DB_PORT", "5432"),
     "database": os.getenv("DB_NAME", "fintech"),
     "user": os.getenv("DB_USER", "fintech"),
-    "password": os.getenv("DB_PASSWORD", "fintech_dev_password"),
+    "password": os.getenv("DB_PASSWORD"),
 }
 @st.cache_resource
 def get_connection():
